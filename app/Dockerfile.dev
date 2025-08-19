@@ -1,17 +1,30 @@
 FROM php:5.6-fpm-alpine
 
-# Build deps + GD libs
+# Optional: pass proxy from build args if you’re behind one
+ARG HTTP_PROXY
+ARG HTTPS_PROXY
+ARG NO_PROXY
+ENV http_proxy=${HTTP_PROXY} https_proxy=${HTTPS_PROXY} no_proxy=${NO_PROXY}
+
+# Make sure this old Alpine uses the proper archive repos, then install deps
 RUN set -eux; \
-    apk add --no-cache \
+    ver="$(cut -d. -f1,2 /etc/alpine-release)"; \
+    printf '%s\n' \
+      "https://archive.alpinelinux.org/alpine/v${ver}/main" \
+      "https://archive.alpinelinux.org/alpine/v${ver}/community" \
+      > /etc/apk/repositories; \
+    apk update; \
+    # create a virtual pkg for clean removal later
+    apk add --no-cache --virtual .build-deps \
         $PHPIZE_DEPS \
+        freetype-dev \
         libjpeg-turbo-dev \
-        libpng-dev \
-        freetype-dev; \
+        libpng-dev; \
     docker-php-ext-configure gd \
         --with-freetype-dir=/usr/include/ \
         --with-jpeg-dir=/usr/include/; \
     docker-php-ext-install -j"$(nproc)" gd mysql mysqli pdo_mysql; \
-    # optional: remove build deps to slim image
-    apk del --no-cache $PHPIZE_DEPS
+    apk del --no-cache .build-deps; \
+    apk add --no-cache ca-certificates
 
 WORKDIR /var/www

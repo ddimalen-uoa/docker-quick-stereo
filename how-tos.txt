@@ -1,0 +1,15 @@
+## To run virtual environment go to backend and then run the following
+.\env\Scripts\activate
+
+## to install anything
+pip install sqlalchemy
+
+# development
+docker compose -f docker-compose-dev.yml up -d --build --force-recreate --remove-orphans
+
+# create random string
+openssl rand -hex 32
+
+# test
+cd /app
+PYTHONPATH=. pytest
