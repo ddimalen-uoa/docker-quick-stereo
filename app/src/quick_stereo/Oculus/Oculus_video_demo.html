@@ -1,0 +1,138 @@
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Oculus Rift - Video Demo</title>
+		<meta charset="utf-8">
+		<style>
+			body {
+				margin: 0px;
+				background-color: #000000;
+				overflow: hidden;
+			}
+		</style>
+	</head>
+	<body>
+
+		<script src="build/three.min.js"></script>
+
+		<script src="js2/effects/OculusRiftEffect.js"></script>
+		<script src="js2/controls/FirstPersonControls.js"></script>
+		<script src="js2/controls/OculusControls.js"></script>
+
+  		<script src="js2/three.js"></script>
+
+		<script src='js2/threex.videotexture.js'></script>
+
+		<video id="video" autoplay style="display:none">
+			<source src="./3D_L.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
+		</video>
+
+		<script>
+
+			var camera, scene, renderer;
+			var realcamera;
+			var guiVisible = true;
+
+			var mesh, effect, controls, oculuscontrol;
+
+			var clock = new THREE.Clock();
+
+			init();
+			animate();
+
+
+			function init() {
+
+				renderer = new THREE.WebGLRenderer();
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+				camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 1, 5000 );
+				camera.position.x = -20;
+
+				scene = new THREE.Scene();
+
+				effect = new THREE.OculusRiftEffect( renderer );
+				effect.setSize( window.innerWidth, window.innerHeight );
+
+				effect.separation = 2000;
+				effect.distortion = 10;
+		        effect.fov = 1100;
+
+				controls = new THREE.FirstPersonControls( camera );
+
+				oculuscontrol = new THREE.OculusControls( camera );
+
+				document.body.appendChild( renderer.domElement );
+
+
+				//Geometry
+				var updateFcts	= [];
+				var canPlayMp4	= document.createElement('video').canPlayType('video/mp4') !== '' ? true : false
+				var canPlayOgg	= document.createElement('video').canPlayType('video/ogg') !== '' ? true : false
+
+				var url	= './data/3D_L_rotated.mp4'
+
+				// create the videoTexture
+				var videoTexture= new THREEx.VideoTexture(url)
+				var video	= videoTexture.video
+				updateFcts.push(function(delta, now){
+					videoTexture.update(delta, now)
+				})
+				
+				// use the texture in a THREE.Mesh
+				var geometry	= new THREE.CubeGeometry(0,50,45);
+				var material	= new THREE.MeshBasicMaterial({
+					map	: videoTexture.texture
+				});
+				var mesh	= new THREE.Mesh( geometry, material );
+				scene.add( mesh );
+
+				var lastTimeMsec= null
+
+				requestAnimationFrame(function animate(nowMsec){
+					// keep looping
+					requestAnimationFrame( animate );
+					// measure time
+					lastTimeMsec	= lastTimeMsec || nowMsec-1000/60
+					var deltaMsec	= Math.min(200, nowMsec - lastTimeMsec)
+					lastTimeMsec	= nowMsec
+					// call each update function
+					updateFcts.forEach(function(updateFn){
+						updateFn(deltaMsec/1000, nowMsec/1000)
+					})
+				})
+
+				window.addEventListener( 'resize', onWindowResize, false );
+
+				oculuscontrol.connect();
+			}
+
+			function onWindowResize() {
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+				realcamera.aspect = window.innerWidth / window.innerHeight;
+				realcamera.updateProjectionMatrix();
+				effect.setSize( window.innerWidth, window.innerHeight );
+				effect.separation = 200;
+				effect.distortion = 10;
+		        effect.fov = 1100;
+				controls.handleResize();
+			}
+
+
+			function animate() {
+				requestAnimationFrame( animate );
+
+				var t = clock.getElapsedTime();
+
+				controls.update( clock.getDelta() );
+				oculuscontrol.update( clock.getDelta() );
+				
+				effect.render( scene, camera );
+			}
+
+		</script>
+
+	</body>
+</html>

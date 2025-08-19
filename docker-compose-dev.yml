@@ -1,0 +1,60 @@
+services:
+  nginx:
+    image: php-nginx-dev-img
+    depends_on:
+      - app
+    restart: always
+    build:
+      context: nginx
+      dockerfile: Dockerfile.dev
+    container_name: php-nginx-dev-container
+    volumes:
+      - ./nginx/nginx-dev.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./app/src:/var/www
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - sktzoootech
+  app:
+    image: php-app-dev-img
+    restart: always
+    build:
+      context: app
+      dockerfile: Dockerfile.dev
+    container_name: php-app-dev-container
+    volumes:
+      - ./app/src:/var/www
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      DB_HOST: mysql
+      DB_NAME: cs_ivs
+      DB_USER: cs_ivs
+      DB_PASS: sdjh86637 
+    networks:
+      - sktzoootech
+  mysql:
+    image: mysql:5.7
+    container_name: mysql-dev-container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: sdjh86637
+      MYSQL_DATABASE: cs_ivs
+      MYSQL_USER: cs_ivs
+      MYSQL_PASSWORD: sdjh86637
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-psdjh86637"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks:
+      - sktzoootech
+networks:
+  sktzoootech:
+volumes:
+  db_data:

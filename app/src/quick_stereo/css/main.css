@@ -1,0 +1,75 @@
+/* CSS Document */
+.submitButton{
+	/*width:200px; */
+	height:50px;
+	font-size:20px;
+}
+.saveButton{
+	/*width:650px; */
+	height:40px;
+	font-size:13px;
+	color:#0000CC;		   
+}
+
+.depthResultShown{
+	vertical-align:top;
+	box-shadow: 0 0 50px 5px rgba(0, 0, 0, 0.4);
+}
+.textureResultShown{
+	vertical-align:top;
+	box-shadow: 0 0 50px 5px rgba(0, 0, 0, 0.4);
+}
+.tableControl{
+	vertical-align:top;
+	box-shadow: 0 0 50px 5px rgba(0, 0, 0, 0.4);
+}
+.sampleOutputCanvas{
+	vertical-align:top;	
+	border: 4px solid #000000;
+	border-radius: 15px 15px 15px 15px;
+	box-shadow: 0 0 50px 5px rgba(0, 0, 0, 0.4);
+}
+
+.displayResult{
+	display:inline-block;
+	vertical-align:top;
+	margin-right:1%;
+	box-shadow: 0 0 50px 5px rgba(0, 0, 0, 0.4);
+	max-height:1000px; 
+	width:45%;
+	max-width:1000px; 
+	opacity:1;
+}
+
+@media screen and (max-width: 1900px)
+{
+	.displayResult{
+		display:block;
+		margin-top:20px;
+		box-shadow: 0 0 50px 5px rgba(0, 0, 0, 0.4);
+		max-height:1000px; 
+		width:95%;
+		max-width:1000px; 
+		opacity:1;
+	}
+}
+
+.displayAutostereogram{	
+	box-shadow: 0 0 50px 5px rgba(0, 0, 0, 0.4);
+}
+
+#download1, #download2, #download3{
+	width: 100%;
+}
+
+#download1 a, #download2 a, #download3 a{
+	cursor:  pointer;
+}
+
+#Downloads a{
+	cursor:  pointer;
+}
+
+#bibtex{
+  cursor:  pointer;
+}

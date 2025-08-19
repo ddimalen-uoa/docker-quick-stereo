@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Math and Stats Library Test</title>
+    <script src="http://ajax.microsoft.com/ajax/jquery/jquery-1.4.2.min.js"></script>
+    <script src="psMathStats.js"></script>
+    <script type="text/javascript">
+        function now()
+        {
+            return new Date().getTime();
+        }
+
+        function runTests()
+        {
+            var start = 0;
+
+            start = now();
+            var myArray = new Array();
+
+            for (var i = 0; i < 10000; i++)
+            {
+                myArray.push(Math.random() * 100000, Math.random() * 100000, Math.random() * 100000, Math.random() * 100000, Math.random() * 100000, Math.random() * 100000, Math.random() * 100000, Math.random() * 100000, Math.random() * 100000, Math.random() * 100000);
+            }
+
+            // Used for testing known set
+            // myArray = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+            $('#length').html(myArray.length + " (" + (now() - start) + "ms) ");
+
+            start = now();
+            $('#stdDev').html(myArray.stdDev() + " (" + (now() - start) + "ms)");
+
+            start = now();
+            $('#mean').html(myArray.mean() + " (" + (now() - start) + "ms)");
+
+            start = now();
+            $('#median').html(myArray.median() + " (" + (now() - start) + "ms)");
+
+            start = now();
+            $('#variance').html(myArray.variance() + " (" + (now() - start) + "ms)");
+
+            start = now();
+            $('#sum').html(myArray.sum() + " (" + (now() - start) + "ms)");
+
+            start = now();
+            $('#max').html(myArray.max() + " (" + (now() - start) + "ms)");
+
+            start = now();
+            $('#min').html(myArray.min() + " (" + (now() - start) + "ms)");
+
+            start = now();
+            $('#first').html(myArray.sortNumber()[0] + " (" + (now() - start) + "ms)");
+
+            start = now();
+            $('#firstInvert').html(myArray.sortNumber(true)[0] + " (" + (now() - start) + "ms)");
+
+            start = now();
+            var p = .65;
+            $('#zValue').html(Math.floor(normsinv(p)*1000)/1000 + " (" + (now() - start) + "ms)");
+            $('#p').html(p * 100);
+        }
+    </script>
+</head>
+<body onload="runTests()">
+<!-- This page was created to test all of the functions of the math and statistics library -->
+    <h1>Tests</h1>
+    <div>Created array with <span id="length"></span> random entries.</div>
+    <br />
+    <div>
+        Array sum is <span id="sum">not calculated</span>
+    </div>
+    <div>
+        Array mean is <span id="mean">not calculated</span>
+    </div>
+    <div>
+        Array median is <span id="median">not calculated</span>
+    </div>
+    <div>
+        Array max is <span id="max">not calculated</span>
+    </div>
+    <div>
+        Array min is <span id="min">not calculated</span>
+    </div>
+    <div>
+        Array first value is sorted low to high <span id="first">not calculated</span>
+    </div>
+    <div>
+        Array first value is sorted high to low <span id="firstInvert">not calculated</span>
+    </div>
+    <br />
+    <div>
+        Array variance is <span id="variance">not calculated</span>
+    </div>
+    <div>
+        Array standard deviation is <span id="stdDev">not calculated</span>
+    </div>
+    <div>
+        Z value (inverse normal distribution) of lower <span id="p">0</span>% area of a normal distribution is <span id="zValue">not calculated</span>
+    </div>
+    
+    
+</body>
+</html>

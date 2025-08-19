@@ -1,0 +1,41 @@
+/* Global Styles */
+
+body {
+	max-width:480px;
+	margin:0px;
+	}
+	
+.footer{
+	display:none;	
+}
+.rightMenu{
+	display:none;	
+}
+
+.topHeader{
+	display:none;	
+}
+
+#navigation{
+	display:none;	
+}
+#leftcol2{
+	display:none;	
+}
+#extraQuickStereoPart{
+	display:none;	
+}
+
+.extra{
+	display:none;	
+}
+.pageName{
+	display:none;	
+}
+.onForIphone{
+	display:;	
+}
+
+.intermediatedResult{
+width:100%; 
+}

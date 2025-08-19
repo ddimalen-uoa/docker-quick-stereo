@@ -1,0 +1,93 @@
+<?php
+session_start();
+$dbname = 'cs_ivs';
+
+//$link = mysql_connect("localhost","d34tixj5_vision","patrice123") or die("Couldn't make connection.");
+$link = mysql_connect("home.sit.auckland.ac.nz","cs_ivs","sdjh86637") or die("Couldn't make connection.");
+$db = mysql_select_db($dbname, $link) or die("Couldn't select database");
+
+//ADMIN SECTION PASSWORD
+/****** SET A STRONG PASSWORD WITH ATLEAST 6-8 CHARS***************/
+$admin_user = 'admin';
+$admin_pass = 'admin';
+
+function page_protect() {
+
+
+//check for cookies
+
+if(isset($_COOKIE['user_id']) && isset($_COOKIE['user_name'])){
+      $_SESSION['user_id'] = $_COOKIE['user_id'];
+      $_SESSION['user_name'] = $_COOKIE['user_name'];
+	  $_SESSION['username'] = $_COOKIE['username'];
+	  $_SESSION['role'] = $_COOKIE['role'];
+   }
+
+
+if (!isset($_SESSION['user_id']))
+{
+//header("Location: logout.php");
+echo "<script language=javascript>alert('Please login again.');document.location='logout.php';</script>";
+}
+/*******************END********************************/
+}
+
+
+function makecomma($input)
+{
+    // This function is written by some anonymous person - I got it from Google
+    if(strlen($input)<=2)
+    { return $input; }
+    $length=substr($input,0,strlen($input)-2);
+    $formatted_input = makecomma($length).",".substr($input,-2);
+    return $formatted_input;
+}
+
+function india($num){
+    // This is my function
+    $pos = strpos((string)$num, ".");
+    if ($pos === false) { $decimalpart="00";}
+    else { $decimalpart= substr($num, $pos+1, 2); $num = substr($num,0,$pos); }
+
+    if(strlen($num)>3 & strlen($num) <= 12){
+                $last3digits = substr($num, -3 );
+                $numexceptlastdigits = substr($num, 0, -3 );
+                $formatted = makecomma($numexceptlastdigits);
+                $stringtoreturn = $formatted.",".$last3digits ;
+    }elseif(strlen($num)<=3){
+                $stringtoreturn = $num;
+    }elseif(strlen($num)>12){
+                $stringtoreturn = number_format($num, 2);
+    }
+
+    if(substr($stringtoreturn,0,2)=="-,"){$stringtoreturn = "-".substr($stringtoreturn,2 );}
+
+    return $stringtoreturn;
+}
+
+
+
+function EncodeURL($url)
+{
+$new = strtolower(ereg_replace(' ','_',$url));
+return($new);
+}
+
+function DecodeURL($url)
+{
+$new = ucwords(ereg_replace('_',' ',$url));
+return($new);
+}
+
+function ChopStr($str, $len) 
+{
+    if (strlen($str) < $len)
+        return $str;
+
+    $str = substr($str,0,$len);
+    if ($spc_pos = strrpos($str," "))
+            $str = substr($str,0,$spc_pos);
+
+    return $str . "...";
+}	
+?>

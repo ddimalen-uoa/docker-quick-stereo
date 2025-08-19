@@ -1,0 +1,5 @@
+/* default style */
+
+body {
+	background-repeat:repeat;
+}

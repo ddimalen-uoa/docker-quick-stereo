@@ -1,0 +1,207 @@
+/* Global Styles */
+
+body {
+	margin:0px;
+	}
+	
+.footer{
+	background:#99CC66;
+	text-align:center;
+	border: 4px solid #5C743D;
+	border-radius: 15px 15px 15px 15px;
+	box-shadow: 0 0 50px 5px rgba(0, 0, 0, 0.4);
+}
+.onForIphone{
+	display:none;	
+}
+
+.rightMenu{
+	background:#5C743D;
+}
+
+.intermediatedResult{
+width:640; 
+height:480px;
+}
+
+	
+td {
+	font:13px Arial, Helvetica, sans-serif;
+	color:#666666;
+	text-align: center;
+	}
+	
+a {
+	color: #000;
+	}
+	
+a:hover {
+	color: #00F;
+	text-align: center;
+	}
+
+/* ID Styles */
+
+#navigation td {
+	border-bottom: 1px solid #F4FFE4;
+	}
+	
+#navigation a {
+	font: bold 11px Arial, Helvetica, sans-serif;
+	color: #D5EDB3;
+	line-height:16px;
+	letter-spacing:.1em;
+	text-decoration: none;
+	display:block;
+	padding:8px 6px 10px 20px;
+	}
+	
+#navigation a:hover {
+	background: #99CC66;
+	color:#993300;
+	}
+	
+#logo 	{
+	font:24px Arial, Helvetica, sans-serif;
+	color: #5C743D;
+	letter-spacing:.2em;
+	line-height:30px;
+	}
+
+#tagline 	{	
+	font:11px Arial, Helvetica, sans-serif;
+	color: #993300;
+	letter-spacing:.4em;
+	line-height:18px;
+	}
+
+#monthformat {
+	border-bottom: 1px dashed #5C743D;
+	}
+		
+#dateformat {
+	font:11px Arial, Helvetica, sans-serif;
+	color: #993300;
+	letter-spacing:.2em;
+	}
+	
+#dateformat a {
+	font:11px Arial, Helvetica, sans-serif;
+	color: #993300;
+	font-weight:bold;
+	letter-spacing:.1em;
+	text-decoration:none;
+	}
+	
+#dateformat a:hover {
+	color: #F4FFE4;
+	letter-spacing:.1em;
+	}
+	
+/* Class Styles */
+	
+.bodyText {
+	font:14px Arial, Helvetica, sans-serif;
+	color:#666666;
+	line-height:20px;
+	margin-top:0px;
+	text-align: left;
+	}
+	
+.pageName{
+	font: 20px Arial, Helvetica, sans-serif;
+	color: #99CC66;
+	line-height:26px;
+	letter-spacing:.21em;
+	}
+	
+.subHeader {
+	font:bold 11px Arial, Helvetica, sans-serif;
+	color: #993300;
+	line-height:22px;
+	letter-spacing:.2em;
+	}
+
+.quote {
+	font: 20px Arial, Helvetica, sans-serif;
+	color: #759DA1;
+	line-height:30px;
+	}
+	
+.highlight {
+	font: 20px Arial, Helvetica, sans-serif;
+	color: #759DA1;
+	background:#FC3;
+	line-height:30px;
+	border:thin;	
+	border-style:solid;
+	}
+.highlightSmall {
+	font: 17px Arial, Helvetica, sans-serif;
+	color: #759DA1;
+	background:#9F9;
+	line-height:25px;
+	border:thin;	
+	border-style:solid;
+	}
+.highlightVerySmall {
+	font: 15px Arial, Helvetica, sans-serif;
+	color: #759DA1;
+	background:#CCC;
+	line-height:20px;
+	border:thin;	
+	border-style:solid;
+	}
+	
+.smallText {
+	font: 10px Arial, Helvetica, sans-serif;
+	color: #666666;
+	line-height: 22px;
+	}
+	
+.navText {
+	font: 11px Arial, Helvetica, sans-serif;
+	/*color: #003366;*/
+	color: #D5EDB3;
+	line-height:16px;
+	letter-spacing:.1em;
+	text-decoration: none;
+	}
+
+.inputType{
+	background-color:#FFFFFF;
+	
+}
+.inputType:hover{
+	background-color:#D5EDB3;
+	cursor:pointer;	
+}
+.Scene_Gallery ul {
+	
+} 
+	
+.Scene_Gallery li {
+    display:inline-block;
+    width:200px;
+}
+
+.highlightImage {
+	padding:2px;
+}
+
+.bodyText center table tr td table tr td {
+	text-align: left;
+}
+
+.floatDepthMap{
+	float:left;
+	width:33%;			
+}
+
+.demoController {
+	font:bold 11px Arial, Helvetica, sans-serif;
+	color: #993300;
+	line-height:22px;
+	letter-spacing:.2em;
+	cursor:pointer;
+}

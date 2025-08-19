@@ -1,0 +1,27 @@
+div.nicetitle {
+    position: absolute;
+    padding: 2px;
+    top: 0px;
+    left: 0px;
+    color: black;
+    font-size: 11px;
+	font-weight: normal;
+    font-family: Arial, Verdana, Helvetica, sans-serif;
+    width: 25em;
+    background: #fffcf4;
+    /* use this to have a transparent backgound... */
+    opacity:0.9; filter:alpha(opacity=90); -moz-opacity:0.9; -khtml-opacity:0.9;
+    border: 1px solid #000;
+    /* Mozilla proprietary */
+    -moz-border-radius: 4px;
+}
+div.nicetitle p {
+    font-size: 11px;
+    margin: 0; padding: 0 3px;
+}
+div.nicetitle p.title {
+	font-weight: bold;
+}
+div.nicetitle p.text {
+    padding-bottom: 3px;
+}

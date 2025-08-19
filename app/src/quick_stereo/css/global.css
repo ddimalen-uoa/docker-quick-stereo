@@ -1,0 +1,343 @@
+/* 
+	Resets defualt browser settings
+	reset.css
+*/
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td { margin:0; padding:0; border:0; outline:0; font-weight:inherit; font-style:inherit; font-size:100%; font-family:inherit; vertical-align:baseline; }
+:focus { outline:0; }
+a:active { outline:none; }
+body { line-height:1; color:black; background:white; }
+ol,ul { list-style:none; }
+table { border-collapse:separate; border-spacing:0; }
+caption,th,td { text-align:left; font-weight:normal; }
+blockquote:before,blockquote:after,q:before,q:after { content:""; }
+blockquote,q { quotes:"" ""; }
+
+/*
+	Page style
+*/
+body { 
+	font:normal 62.5%/1.5 Helvetica, Arial, sans-serif;
+	letter-spacing:0;
+	color:#434343;
+	background:#000000;
+	
+	position:relative;
+	text-shadow:0 1px 0 rgba(255,255,255,.8);
+	-webkit-font-smoothing: subpixel-antialiased;
+}
+
+#container {
+	width:1000px;
+	padding:10px;
+	margin:0 auto;
+	position:relative;
+	z-index:0;
+}
+
+#example {
+	width:1000px;
+	height:350px;
+	position:relative;
+}
+
+.mainImage{
+	/* webkit example */
+        background-image: -webkit-gradient(
+          linear, right top, left top, from(rgba(255, 255, 255, 1.0)),
+          to(rgba(255, 255, 255, 0))
+        );
+
+        /* mozilla example - FF3.6+ */
+        background-image: -moz-linear-gradient(
+          right center,
+          rgba(255, 255, 255, 1.0) 20%, rgba(255, 255, 255, 0) 95%
+        );
+
+        /* IE 5.5 - 7 */
+        filter: progid:DXImageTransform.Microsoft.gradient(
+          gradientType=1, startColor=0, endColorStr=#FFFFFF
+        );
+
+        /* IE8 uses -ms-filter for whatever reason... */
+        -ms-filter: progid:DXImageTransform.Microsoft.gradient(
+          gradientType=1, startColor=0, endColoStr=#FFFFFF
+        );
+
+
+
+}
+
+#ribbon {
+	font-size:24px;
+	color:#FFFFFF;
+	position:absolute;
+	top:50px;
+	left:-20px;
+	z-index:500;	
+	width:200px;
+	text-align:center;
+	display:none;
+	/*
+	background-color:#CCCCCC;
+
+	
+	border: 4px solid #365872;
+	border-radius: 15px 15px 15px 15px;
+	box-shadow: 0 0 50px 5px rgba(0, 0, 0, 0.4);
+	
+	-moz-transform:rotate(-45deg);
+	-ms-transform:rotate(-45deg);
+	*/
+}
+#ribbon img{
+	cursor:pointer;
+}
+
+#frame {
+	position:absolute;
+	z-index:0;
+	width:1000px;
+	height:500px;
+	top:-3px;
+	left:-80px;
+}
+
+/*
+	Slideshow
+*/
+
+#slides {
+	background:#000000;
+	position:absolute;
+	height:800px;
+	top:15px;
+	left:4px;
+	z-index:100;
+	text-align:center;
+	vertical-align:middle;
+}
+
+#categoryText{
+	color:#FFFFFF;
+	font-size:20px;
+	vertical-align:middle;
+	text-align:center;
+}
+
+/*
+	Slides container
+	Important:
+	Set the width of your slides container
+	Set to display none, prevents content flash
+*/
+
+.slides_container {
+	width:1000px;
+	overflow:hidden;
+	position:relative;
+	display:none;
+}
+
+/*
+	Each slide
+	Important:
+	Set the width of your slides
+	If height not specified height will be set by the slide content
+	Set to display block
+*/
+
+.slides_container div.slide {
+	width:1000px;
+	height:800px;
+	display:block;
+}
+
+
+/*
+	Next/prev buttons
+*/
+
+#slides .next,#slides .prev, #slides .up, #slides .down, #slides .home, #slides .move, #slides .bin, #slides .listCategory, #slides .moveCategory {
+	position:absolute;
+	top:400px;
+	left:-30px;
+	width:24px;
+	height:43px;
+	display:block;
+	z-index:101;
+}
+
+#slides .listCategory {
+	left:-10px;
+	top:40px;
+	width:350px;
+	height:30px;
+	font-size:21px;
+	background:#333333;
+	color:#FFFFFF;
+}
+
+#slides .moveCategory {
+	left:760px;
+	top:80px;
+	width:350px;
+	height:30px;
+	font-size:21px;
+	background:#333333;
+	color:#FFFFFF;	
+}
+
+#slides strong {
+	color:#99FFFF;
+}
+#slides strong.redS {
+	color:#FF0000;
+	font-size:24px;
+}
+
+
+#slides .home {
+	left:750px;
+	top:10px;
+}
+
+#slides .move {
+	left:850px;
+	top:10px;
+}
+
+#slides .bin {
+	left:950px;
+	top:10px;
+}
+
+#slides .prev:hover{
+	left:-40px;
+}
+
+#slides .next {
+	left:950px;
+}
+
+#slides .next:hover{
+	left:960px;
+}
+
+#slides .up {
+	left:475px;
+	top:40px;
+}
+#slides .up:hover{
+	top:30px;
+}
+
+#slides .down {
+	left:475px;
+	top:600px;
+}
+#slides .down:hover{
+	top:610px;
+}
+
+
+
+/*
+	Pagination
+*/
+
+.pagination {
+	margin:26px auto 0;
+	width:300px;	
+	margin-bottom: 100px;
+}
+
+.pagination li {
+	float:left;
+	margin:0 1px;
+	list-style:none;
+}
+
+.pagination li a {
+	display:block;
+	width:12px;
+	height:0;
+	padding-top:12px;
+	background-image:url(../img/pagination.png);
+	background-position:0 0;
+	float:left;
+	overflow:hidden;
+}
+
+.pagination li.current a {
+	background-position:0 -12px;
+}
+
+/*
+	Caption
+*/
+
+.showingResult{
+	font-size:2.3em;
+}
+
+.caption {
+	z-index:500;
+	position:absolute;
+	bottom:-35px;
+	left:0;
+	height:40px;
+	padding:0px 20px 0 20px;
+	background:#000;
+	background:rgba(0,0,0,.5);
+	width:1000px;
+	font-size:2.3em;
+	line-height:2.33;
+	color:#fff;
+	border-top:1px solid #000;
+	text-shadow:none;
+}
+
+/*
+	Footer
+*/
+
+#footer {
+	text-align:center;
+	width:1000px;
+	margin-top:9px;
+	padding:4.5px 0 18px;
+	border-top:1px solid #dfdfdf;
+}
+
+#footer p {
+	margin:4.5px 0;
+	font-size:1.0em;
+}
+
+/*
+	Anchors
+*/
+
+a:link,a:visited {
+	color:#599100;
+	text-decoration:none;
+}
+
+a:hover,a:active {
+	color:#599100;
+	text-decoration:underline;
+}
+
+#dhtmltooltip{
+	position: absolute;
+	width: 150px;
+	border: 2px solid black;
+	padding: 2px;
+	background-color: lightyellow;
+	visibility: hidden;
+	z-index: 100;
+	/*Remove below line to remove shadow. Below line should always appear last within this CSS*/
+	filter: progid:DXImageTransform.Microsoft.Shadow(color=gray,direction=135);
+	font-size:14px;
+	color:#FFFFFF;
+}

@@ -1,0 +1,1 @@
+TrackImageJBlobs.exe < Batch.txt
