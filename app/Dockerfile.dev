@@ -1,3 +1,18 @@
-FROM nanoninja/php-fpm:5.6.40
+# FROM nanoninja/php-fpm:5.6.40
+FROM php:8.4-fpm
 
 WORKDIR /var/www
+
+# OS libs needed by GD
+RUN apt-get update && apt-get install -y \
+    libpng-dev libjpeg62-turbo-dev libfreetype6-dev libwebp-dev \
+ && rm -rf /var/lib/apt/lists/*
+
+# Configure & install GD (with JPEG/PNG/WebP/Freetype)
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
+ && docker-php-ext-install gd
+
+# Your DB extensions (from earlier)
+RUN docker-php-ext-install mysqli pdo_mysql && docker-php-ext-enable mysqli
+
+CMD ["php-fpm"]

@@ -14,8 +14,7 @@ services:
     ports:
       - 80:80
       - 443:443
-    networks:
-      - sktzoootech
+    networks: [sktzoootech]
   app:
     image: php-app-dev-img
     restart: always
@@ -33,8 +32,7 @@ services:
       DB_NAME: cs_ivs
       DB_USER: cs_ivs
       DB_PASS: sdjh86637 
-    networks:
-      - sktzoootech
+    networks: [sktzoootech]
   mysql:
     image: mysql:5.7
     container_name: mysql-dev-container
@@ -52,8 +50,9 @@ services:
       interval: 5s
       timeout: 3s
       retries: 20
-    networks:
-      - sktzoootech
+    networks: [sktzoootech]
+    ports:
+      - "3308:3306"
 networks:
   sktzoootech:
 volumes:

@@ -1,6 +1,6 @@
 <?php
 
-error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE & ~E_DEPRECATED & ~E_STRICT); // PHP 5.6
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE & ~E_WARNING);
 ini_set('display_errors', '0');  
 ini_set('log_errors', '1');      
 
@@ -8,45 +8,40 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-function loggit($msg, $postvars=array()) {
-   
-	$today = date('Y-m-d');
-	
-	try {
-	   $fh = fopen($_SERVER['DOCUMENT_ROOT'] . '/quick_stereo/debuglogs/source-'.'-'.$today .'.log', 'a+'); 
-	   fwrite($fh, '--- '.date('Y-m-d H:i:s') .': ' . $msg ."\n"); 
-	   if (is_object($postvars)) {
-		  fwrite($fh, date('Y-m-d H:i:s') .': ' . print_r($postvars,true) ."\n"); 
-	   } else if (!is_array($postvars)) {
-		  fwrite($fh, date('Y-m-d H:i:s') .': ' . $postvars ."\n"); 
-	   } else if (count($postvars) > 0) {
- 
-		  foreach ($postvars as $key => $var) {
-			 try {
-				if (is_array($var)) {
-				   fwrite($fh, $key .' = ');
-				   fwrite($fh, print_r($var, true) ."\n" );
-				   
-				} else {   
-				   fwrite($fh, $key .' = ' . (string) $var ."\n" );
-				}
-			 } catch (Exception $e) {
-				fwrite($fh, $key ."\n");
-				fwrite($fh, 'Caught exception: '.  $e->getMessage(). "\n");
-			 }
-			 
-		  }
-		  fwrite($fh, "\n");
- 
-		  
-	   }
-	   // fwrite($fh, "\n");
-	   fclose($fh);
-	} catch (Exception $e) {
-	   // We cant let anyone know. Or maybe could email?
-	   // echo 'Caught exception: ',  $e->getMessage(), "\n";
-	}
- 
+function loggit($msg, $postvars = [])
+{
+    $today = date('Y-m-d');
+    $dir  = rtrim($_SERVER['DOCUMENT_ROOT'] ?? '', '/') . '/quick_stereo/debuglogs';
+    $file = $dir . '/source-' . $today . '.log';
+
+    if (!is_dir($dir) && !mkdir($dir, 0775, true) && !is_dir($dir)) {
+        return;
+    }
+
+    $lines = [];
+    $lines[] = '--- ' . date('Y-m-d H:i:s') . ': ' . stringify($msg);
+
+    if (is_object($postvars)) {
+        $lines[] = date('Y-m-d H:i:s') . ': ' . print_r($postvars, true);
+    } elseif (!is_array($postvars)) {
+        $lines[] = date('Y-m-d H:i:s') . ': ' . stringify($postvars);
+    } else {
+        foreach ($postvars as $k => $v) {
+            $lines[] = $k . ' = ' . (is_array($v) ? print_r($v, true) : stringify($v));
+        }
+        $lines[] = '';
+    }
+
+    error_log(implode(PHP_EOL, $lines) . PHP_EOL, 3, $file);
+}
+
+function stringify($value): string
+{
+    if (is_scalar($value) || (is_object($value) && method_exists($value, '__toString'))) {
+        return (string) $value;
+    }
+    $json = json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    return $json !== false ? $json : (is_array($value) ? print_r($value, true) : gettype($value));
 }
 
 loggit("AT Line 45");
@@ -109,8 +104,14 @@ loggit("The time it took to reach this line 100: ", $duration);
 
 $file = "upload_stereo/returnParameters.txt";
 $f = fopen($file, "r");
-$parameterReturned = fgets($f, 1000);
-fclose($file);
+
+if ($f) {  // check that fopen succeeded
+    $parameterReturned = fgets($f, 1000);
+    fclose($f);
+} else {
+    error_log("Failed to open file: $file");
+    $parameterReturned = null;
+}
 
 // TIMER BLOCK
 $end = microtime(true);
@@ -548,14 +549,14 @@ include "../web/menu.php";
         //processing time
         var algorithmProcessingTime = new Array();
         <?php
-        $sql = "SELECT `algorithm`, AVG(resolution) AS averageResolution, AVG(processingTime) AS average,
+        $sqlAverage = "SELECT `algorithm`, AVG(resolution) AS averageResolution, AVG(processingTime) AS average,
 			   AVG(processingTime*processingTime) - AVG(processingTime)*AVG(processingTime) AS variance,
 			   SQRT(AVG(processingTime*processingTime) - AVG(processingTime)*AVG(processingTime)) AS stdev,
 			   MIN(processingTime) AS minTime,
 			   MAX(processingTime) AS maxTime
 			FROM `cs_stereo_processing_time`
 			GROUP BY `algorithm`";
-        $result = mysql_query($sql);
+        $result = mysql_query($sqlAverage);
 
         while($row = mysql_fetch_assoc($result)){
         extract($row);

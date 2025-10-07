@@ -15,18 +15,31 @@ $spamIP="'178.162.191.58','78.159.112.128','212.95.32.92','188.165.212.59','31.2
 //}
 
 //$hostname = 'home.sit.auckland.ac.nz';
-$hostname = 'mysql';
-$username = 'cs_ivs';
-$dbname = 'cs_ivs';
-$password='sdjh86637';
+// $hostname = 'mysql';
+// $username = 'cs_ivs';
+// $dbname = 'cs_ivs';
+// $password='sdjh86637';
+$hostname = getenv('DB_HOST') ?: 'mysql';
+$username = getenv('DB_USER') ?: 'cs_ivs';
+$dbname   = getenv('DB_NAME') ?: 'cs_ivs';
+$password = getenv('DB_PASS') ?: '';
 
-//old database connection
-$link = mysql_connect($hostname, $username, $password) or die("Couldn't make connection.");
-$db = mysql_select_db($dbname, $link) or die("Couldn't select database");
+// old database connection
+$link = mysqli_connect($hostname, $username, $password);
+if (!$link) {
+    die("Couldn't make connection: " . mysqli_connect_error());
+}
+$db = mysqli_select_db($link, $dbname);
+
+// 👇 add this line so mysql_* compat wrappers can find a default link
+$GLOBALS['__MYSQLI_DEFAULT_LINK'] = $link;
 
 //new database connection with PDO for more security
 try {
-	$dbc = new PDO("mysql:host=$hostname;dbname=$dbname", $username, $password);
+	$dsn = "mysql:host=$hostname;dbname=$dbname;charset=utf8mb4";
+	$dbc = new PDO($dsn, $username, $password, [
+		PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+	]);
 	$dbc->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	//return $dbc;
 } catch(PDOException $e) {
@@ -34,11 +47,12 @@ try {
 }
 
 //Detect special conditions devices
-$iPod = stripos($_SERVER['HTTP_USER_AGENT'],"iPod");
-$iPhone = stripos($_SERVER['HTTP_USER_AGENT'],"iPhone");
-$iPad = stripos($_SERVER['HTTP_USER_AGENT'],"iPad");
-$Android= stripos($_SERVER['HTTP_USER_AGENT'],"Android");
-$webOS= stripos($_SERVER['HTTP_USER_AGENT'],"webOS");
+$ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
+$iPod    = stripos($ua, "iPod");
+$iPhone  = stripos($ua, "iPhone");
+$iPad    = stripos($ua, "iPad");
+$Android = stripos($ua, "Android");
+$webOS   = stripos($ua, "webOS");
 
 //do something with this information
 if( $iPod || $iPhone ){
@@ -120,19 +134,8 @@ function india($num){
     return $stringtoreturn;
 }
 
-
-
-function EncodeURL($url)
-{
-$new = strtolower(ereg_replace(' ','_',$url));
-return($new);
-}
-
-function DecodeURL($url)
-{
-$new = ucwords(ereg_replace('_',' ',$url));
-return($new);
-}
+function EncodeURL($url)  { return strtolower(str_replace(' ', '_', $url)); }
+function DecodeURL($url)  { return ucwords(str_replace('_', ' ', $url)); }
 
 function ChopStr($str, $len)
 {
@@ -170,22 +173,29 @@ $ipDetail['country_code']=$cc_match[1]; //assing the country code to array
 return $ipDetail;
 }
 
-function save_image($img,$fullpath){
-	if($fullpath=='basename'){
-		$fullpath = basename($img);
-	}
-	$ch = curl_init ($img);
-	curl_setopt($ch, CURLOPT_HEADER, 0);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	curl_setopt($ch, CURLOPT_BINARYTRANSFER,1);
-	$rawdata=curl_exec($ch);
-	curl_close ($ch);
-	if(file_exists($fullpath)){
-		unlink($fullpath);
-	}
-	$fp = fopen($fullpath,'x');
-	fwrite($fp, $rawdata);
-	fclose($fp);
+function save_image($img, $fullpath) {
+    if ($fullpath === 'basename') $fullpath = basename($img);
+    $dir = dirname($fullpath);
+    if (!is_dir($dir)) { @mkdir($dir, 0775, true); }
+
+    $ch = curl_init($img);
+    curl_setopt_array($ch, [
+        CURLOPT_HEADER => 0,
+        CURLOPT_RETURNTRANSFER => 1,
+        CURLOPT_FOLLOWLOCATION => 1,
+        CURLOPT_BINARYTRANSFER => 1,
+        CURLOPT_TIMEOUT => 20,
+    ]);
+    $raw = curl_exec($ch);
+    curl_close($ch);
+
+    if ($raw === false) return false;
+    if (file_exists($fullpath)) @unlink($fullpath);
+    $fp = fopen($fullpath, 'wb');      // <— binary mode
+    if (!$fp) return false;
+    fwrite($fp, $raw);
+    fclose($fp);
+    return true;
 }
 
 function returnItem($enterid, $count, $action){
