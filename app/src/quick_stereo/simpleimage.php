@@ -26,35 +26,29 @@ class SimpleImage {
    var $image_type;
  
    function load($filename) {
- 
-      $image_info = getimagesize($filename);
-      $this->image_type = $image_info[2];
-      if( $this->image_type == IMAGETYPE_JPEG ) {
- 
+      $info = getimagesize($filename);
+      $this->image_type = $info[2];
+      if ($this->image_type == IMAGETYPE_JPEG) {
          $this->image = imagecreatefromjpeg($filename);
-      } elseif( $this->image_type == IMAGETYPE_GIF ) {
- 
+      } elseif ($this->image_type == IMAGETYPE_GIF) {
          $this->image = imagecreatefromgif($filename);
-      } elseif( $this->image_type == IMAGETYPE_PNG ) {
- 
+      } elseif ($this->image_type == IMAGETYPE_PNG) {
          $this->image = imagecreatefrompng($filename);
+         imagealphablending($this->image, false);
+         imagesavealpha($this->image, true);
       }
    }
-   function save($filename, $image_type=IMAGETYPE_JPEG, $compression=100, $permissions=null) {
- 
-      if( $image_type == IMAGETYPE_JPEG ) {
-         imagejpeg($this->image,$filename,$compression);
-      } elseif( $image_type == IMAGETYPE_GIF ) {
- 
-         imagegif($this->image,$filename);
-      } elseif( $image_type == IMAGETYPE_PNG ) {
- 
-         imagepng($this->image,$filename);
+   function save($filename, $image_type = IMAGETYPE_JPEG, $quality = 90, $permissions = null) {
+      if ($image_type == IMAGETYPE_JPEG) {
+         imagejpeg($this->image, $filename, $quality); // 0–100
+      } elseif ($image_type == IMAGETYPE_PNG) {
+         $level = (int) round((100 - max(min($quality,100),0)) * 9 / 100); // map 0–100 → 0–9
+         imagesavealpha($this->image, true);
+         imagepng($this->image, $filename, $level);
+      } elseif ($image_type == IMAGETYPE_GIF) {
+         imagegif($this->image, $filename);
       }
-      if( $permissions != null) {
- 
-         chmod($filename,$permissions);
-      }
+      if ($permissions !== null) chmod($filename, $permissions);
    }
    function output($image_type=IMAGETYPE_JPEG) {
  
@@ -95,22 +89,33 @@ class SimpleImage {
       $this->resize($width,$height);
    }
  
-   function resize($width,$height) {
-      $new_image = imagecreatetruecolor($width, $height);
-      imagecopyresampled($new_image, $this->image, 0, 0, 0, 0, $width, $height, $this->getWidth(), $this->getHeight());
-      $this->image = $new_image;
-   }      
+   function resize($width, $height) {
+      $new = imagecreatetruecolor($width, $height);
+      // If PNG/GIF, keep transparency
+      if (in_array($this->image_type, [IMAGETYPE_PNG, IMAGETYPE_GIF], true)) {
+         imagealphablending($new, false);
+         imagesavealpha($new, true);
+         $transparent = imagecolorallocatealpha($new, 0, 0, 0, 127);
+         imagefilledrectangle($new, 0, 0, $width, $height, $transparent);
+      }
+      imagecopyresampled($new, $this->image, 0, 0, 0, 0, $width, $height, $this->getWidth(), $this->getHeight());
+      $this->image = $new;
+   }     
    
-   function merge800600(){
-	   	// Create image instances
-		$image = $this->image;
-		$dest = imagecreatefrompng('black800600.png');
-		$width = $this->getWidth();
-        $height = $this->getheight();
-		$startX = (800 - $width)/2;
-		$startY = (600 - $height)/2;		
-		imagecopymerge($dest, $image, $startX, $startY, 0, 0, $width, $height, 100);
-		$this->image = $dest;		
+   function merge800600() {
+      $image = $this->image;
+      $dest = imagecreatefrompng(__DIR__ . '/black800600.png'); // safer path
+      imagealphablending($dest, false);
+      imagesavealpha($dest, true);
+
+      $width  = $this->getWidth();
+      $height = $this->getHeight();
+      $startX = (800 - $width) / 2;
+      $startY = (600 - $height) / 2;
+
+      // Use imagecopy to preserve alpha
+      imagecopy($dest, $image, $startX, $startY, 0, 0, $width, $height);
+      $this->image = $dest;
    }
  
 }

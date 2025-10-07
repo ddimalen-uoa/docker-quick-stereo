@@ -1,6 +1,8 @@
 <?php
 // mysql_compat.php — PHP 5.6-safe shim mapping mysql_* to mysqli_*
 // Include this BEFORE any code that calls mysql_* functions.
+$GLOBALS['__MYSQL_COMPAT_LAST_ERROR'] = null;
+$GLOBALS['__MYSQL_COMPAT_LAST_ERRNO'] = null;
 
 if (!function_exists('mysql_connect') && function_exists('mysqli_connect')) {
     // Define old constants if missing (some code uses these)
@@ -28,32 +30,49 @@ if (!function_exists('mysql_connect') && function_exists('mysqli_connect')) {
     }
 
     function mysql_query($query, $link = null) {
-        $link = _mysql_compat_link($link);
-        return $link ? @mysqli_query($link, $query) : false;
+        $link = _mysql_compat_link($link);           // your helper to pick a default link
+        if (!$link) {
+            $GLOBALS['__MYSQL_COMPAT_LAST_ERROR'] = 'No MySQLi link available';
+            $GLOBALS['__MYSQL_COMPAT_LAST_ERRNO'] = 2006; // "server has gone away" as a generic code
+            error_log("[mysql_compat] No link for query: $query");
+            return false;
+        }
+
+        $res = mysqli_query($link, $query);
+        if ($res === false) {
+            $GLOBALS['__MYSQL_COMPAT_LAST_ERROR'] = mysqli_error($link);
+            $GLOBALS['__MYSQL_COMPAT_LAST_ERRNO'] = mysqli_errno($link);
+            error_log("[mysql_compat] Query failed ({$GLOBALS['__MYSQL_COMPAT_LAST_ERRNO']}): {$GLOBALS['__MYSQL_COMPAT_LAST_ERROR']} | SQL: $query");
+        } else {
+            $GLOBALS['__MYSQL_COMPAT_LAST_ERROR'] = null;
+            $GLOBALS['__MYSQL_COMPAT_LAST_ERRNO'] = null;
+        }
+        return $res;
     }
 
     function mysql_fetch_assoc($result) {
-        return @mysqli_fetch_assoc($result);
+        if (!($result instanceof mysqli_result)) {
+            return false;
+        }
+        return mysqli_fetch_assoc($result);
     }
 
     function mysql_fetch_row($result) {
         return @mysqli_fetch_row($result);
     }
 
-    function mysql_fetch_array($result, $result_type = MYSQL_BOTH) {
-        $type = MYSQLI_BOTH;
-        if ($result_type === MYSQL_ASSOC) $type = MYSQLI_ASSOC;
-        elseif ($result_type === MYSQL_NUM) $type = MYSQLI_NUM;
-        return @mysqli_fetch_array($result, $type);
+    function mysql_fetch_array($result, $result_type = MYSQLI_BOTH) {
+        if (!($result instanceof mysqli_result)) return false;
+        return mysqli_fetch_array($result, $result_type);
     }
 
     function mysql_num_rows($result) {
-        return @mysqli_num_rows($result);
+        return ($result instanceof mysqli_result) ? mysqli_num_rows($result) : 0;
     }
 
-    function mysql_real_escape_string($str, $link = null) {
+    function mysql_real_escape_string($string, $link = null) {
         $link = _mysql_compat_link($link);
-        return $link ? mysqli_real_escape_string($link, $str) : $str;
+        return $link ? mysqli_real_escape_string($link, $string) : addslashes($string);
     }
 
     function mysql_insert_id($link = null) {
@@ -62,14 +81,23 @@ if (!function_exists('mysql_connect') && function_exists('mysqli_connect')) {
     }
 
     function mysql_error($link = null) {
+        if ($link instanceof mysqli) return mysqli_error($link);
+        return $GLOBALS['__MYSQL_COMPAT_LAST_ERROR'] ?? '';
+    }
+
+    function mysql_errno($link = null) {
+        if ($link instanceof mysqli) return mysqli_errno($link);
+        return $GLOBALS['__MYSQL_COMPAT_LAST_ERRNO'] ?? 0;
+    }
+
+    function mysql_affected_rows($link = null) {
         $link = _mysql_compat_link($link);
-        return $link ? mysqli_error($link) : '';
+        return $link ? mysqli_affected_rows($link) : 0;
     }
 
     function mysql_close($link = null) {
         $link = _mysql_compat_link($link);
-        $GLOBALS['__MYSQLI_LINK'] = null;
-        return $link ? @mysqli_close($link) : false;
+        return $link ? mysqli_close($link) : false;
     }
 
     function mysql_set_charset($charset, $link = null) {
